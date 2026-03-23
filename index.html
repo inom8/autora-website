@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Autora — Your Road, Our Responsibility</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --orange: #F05A28;
+    --orange-glow: #FF7A4Acc;
+    --dark: #0A0C10;
+    --dark2: #0F1219;
+    --navy: #0D1624;
+    --card: #131B2A;
+    --card2: #1A2438;
+    --white: #F4F0E8;
+    --gray: #7A8BA0;
+    --grayL: #B0BDD0;
+    --border: rgba(255,255,255,0.07);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: var(--orange); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+    mix-blend-mode: normal;
+  }
+  .cursor-ring {
+    position: fixed; width: 40px; height: 40px;
+    border: 1.5px solid rgba(240,90,40,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 60px;
+    background: linear-gradient(to bottom, rgba(10,12,16,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.3s, background 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(10,12,16,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 60px;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 4px;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--orange); }
+  .nav-links { display: flex; gap: 40px; align-items: center; }
+  .nav-links a {
+    color: var(--grayL); font-size: 0.85rem; font-weight: 500;
+    letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--orange); color: var(--white) !important;
+    padding: 10px 24px; border-radius: 2px;
+    font-weight: 600 !important; letter-spacing: 1px !important;
+    transition: opacity 0.2s !important;
+  }
+  .nav-cta:hover { opacity: 0.85; color: var(--white) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; position: relative; overflow: hidden;
+    padding: 140px 60px 80px;
+  }
+
+  /* Animated grid bg */
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(240,90,40,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(240,90,40,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove { from { transform: translateY(0); } to { transform: translateY(60px); } }
+
+  /* Orange glow orb */
+  .hero-orb {
+    position: absolute; right: -200px; top: 50%; transform: translateY(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(240,90,40,0.15) 0%, rgba(240,90,40,0.05) 40%, transparent 70%);
+    border-radius: 50%; pointer-events: none; z-index: 0;
+    animation: orbPulse 6s ease-in-out infinite;
+  }
+  @keyframes orbPulse {
+    0%, 100% { opacity: 0.8; transform: translateY(-50%) scale(1); }
+    50% { opacity: 1; transform: translateY(-50%) scale(1.05); }
+  }
+
+  .hero-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--orange); font-weight: 600; margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 32px; height: 2px; background: var(--orange);
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 12vw, 160px);
+    line-height: 0.9; letter-spacing: 2px;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+  .hero-title .line2 { color: var(--orange); display: block; }
+
+  .hero-sub {
+    font-size: 1.15rem; color: var(--grayL); line-height: 1.7;
+    max-width: 520px; margin-top: 32px; font-weight: 300;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+
+  .hero-actions {
+    display: flex; gap: 16px; margin-top: 48px; align-items: center;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+  .btn-primary {
+    background: var(--orange); color: var(--white);
+    padding: 16px 36px; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; border: none; cursor: none;
+    text-decoration: none; display: inline-block;
+    transition: transform 0.2s, box-shadow 0.2s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(240,90,40,0.4);
+  }
+  .btn-ghost {
+    color: var(--grayL); padding: 16px 24px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--white); }
+  .btn-ghost::after { content: '→'; font-size: 1.1rem; }
+
+  /* Scroll indicator */
+  .scroll-indicator {
+    position: absolute; bottom: 40px; left: 60px;
+    display: flex; align-items: center; gap: 12px;
+    color: var(--gray); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    z-index: 1; opacity: 0; animation: fadeUp 1s ease 1.2s forwards;
+  }
+  .scroll-line {
+    width: 40px; height: 1px; background: var(--gray);
+    position: relative; overflow: hidden;
+  }
+  .scroll-line::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--orange); transform: translateX(-100%);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+  @keyframes scrollLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+  /* Stats bar */
+  .stats-bar {
+    background: var(--card); border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+  }
+  .stat-item {
+    padding: 48px 40px; text-align: center;
+    border-right: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-item:hover { background: var(--card2); }
+  .stat-item::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: var(--orange);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .stat-item:hover::before { transform: scaleX(1); }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem; color: var(--orange); letter-spacing: 2px;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.78rem; color: var(--gray);
+    letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; font-weight: 500;
+  }
+
+  /* SECTIONS */
+  section { padding: 120px 60px; }
+
+  .section-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--orange); font-weight: 600; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-tag::before { content: ''; width: 24px; height: 2px; background: var(--orange); }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 0.95; letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+
+  /* PROBLEM */
+  .problem { background: var(--dark2); }
+  .problem-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .problem-left { position: sticky; top: 120px; }
+  .problem-desc { color: var(--grayL); font-size: 1.05rem; line-height: 1.8; font-weight: 300; }
+  .problem-cards { display: flex; flex-direction: column; gap: 2px; }
+  .problem-card {
+    background: var(--card); border: 1px solid var(--border);
+    padding: 32px; position: relative; overflow: hidden;
+    transition: background 0.3s, border-color 0.3s;
+    cursor: none;
+  }
+  .problem-card:hover { background: var(--card2); border-color: rgba(240,90,40,0.3); }
+  .problem-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--orange);
+    transform: scaleY(0); transform-origin: top; transition: transform 0.3s;
+  }
+  .problem-card:hover::before { transform: scaleY(1); }
+  .problem-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem; color: rgba(240,90,40,0.1);
+    position: absolute; right: 24px; top: 12px; line-height: 1;
+    transition: color 0.3s;
+  }
+  .problem-card:hover .problem-num { color: rgba(240,90,40,0.2); }
+  .problem-card h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 10px; }
+  .problem-card p { color: var(--gray); font-size: 0.92rem; line-height: 1.6; font-weight: 300; }
+
+  /* HOW IT WORKS */
+  .how { background: var(--dark); }
+  .modules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+  .module {
+    background: var(--card); padding: 48px 36px;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+  .module:hover { background: var(--card2); }
+  .module-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 6rem;
+    color: rgba(255,255,255,0.04); position: absolute;
+    right: -10px; bottom: -10px; line-height: 1; letter-spacing: -2px;
+    transition: color 0.3s;
+  }
+  .module:hover .module-num { color: rgba(240,90,40,0.08); }
+  .module-icon {
+    width: 48px; height: 48px; background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 28px;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  }
+  .module h3 {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 1.4rem;
+    font-weight: 700; letter-spacing: 1px; margin-bottom: 16px;
+    color: var(--white);
+  }
+  .module ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .module ul li {
+    color: var(--gray); font-size: 0.9rem; font-weight: 300;
+    padding-left: 16px; position: relative; line-height: 1.5;
+  }
+  .module ul li::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 6px; height: 1px; background: var(--orange);
+  }
+
+  /* MARKET */
+  .market { background: var(--dark2); }
+  .market-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .market-visual {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    height: 400px;
+  }
+  .market-circle {
+    width: 300px; height: 300px; border-radius: 50%;
+    border: 1px solid rgba(240,90,40,0.2);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    animation: rotateSlow 20s linear infinite;
+  }
+  @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .market-circle::before {
+    content: ''; position: absolute; width: 340px; height: 340px;
+    border-radius: 50%; border: 1px dashed rgba(240,90,40,0.1);
+    animation: rotateSlow 30s linear infinite reverse;
+  }
+  .market-circle-inner {
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(240,90,40,0.15), rgba(240,90,40,0.02));
+    border: 1px solid rgba(240,90,40,0.3);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    animation: rotateSlow 20s linear infinite reverse;
+  }
+  .market-center-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--orange); line-height: 1;
+  }
+  .market-center-label { font-size: 0.7rem; color: var(--gray); letter-spacing: 2px; text-transform: uppercase; }
+  .market-dot {
+    position: absolute; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--orange); animation: rotateSlow 20s linear infinite reverse;
+  }
+  .market-dot:nth-child(1) { top: -6px; left: 50%; transform: translateX(-50%); }
+  .market-dot:nth-child(2) { bottom: -6px; right: 20px; }
+
+  .market-stats { display: flex; flex-direction: column; gap: 24px; }
+  .market-stat {
+    display: flex; align-items: center; gap: 24px;
+    padding: 24px; background: var(--card);
+    border: 1px solid var(--border); transition: border-color 0.3s;
+  }
+  .market-stat:hover { border-color: rgba(240,90,40,0.3); }
+  .market-stat-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+    color: var(--orange); min-width: 100px; line-height: 1;
+  }
+  .market-stat-info strong {
+    display: block; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem; letter-spacing: 1px; font-weight: 700; margin-bottom: 4px;
+  }
+  .market-stat-info span { color: var(--gray); font-size: 0.85rem; font-weight: 300; }
+
+  /* BUSINESS MODEL */
+  .model { background: var(--dark); }
+  .model-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 60px; }
+  .model-card {
+    background: var(--card); padding: 44px;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+  .model-card:hover { background: var(--card2); }
+  .model-badge {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem; font-weight: 700; letter-spacing: 2px;
+    padding: 6px 16px; margin-bottom: 20px;
+    background: rgba(240,90,40,0.15); color: var(--orange);
+    border: 1px solid rgba(240,90,40,0.3);
+  }
+  .model-card h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.5rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 12px;
+  }
+  .model-card p { color: var(--gray); font-size: 0.9rem; line-height: 1.7; font-weight: 300; }
+  .model-pct {
+    position: absolute; right: 36px; bottom: 36px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem;
+    color: rgba(240,90,40,0.15); line-height: 1; transition: color 0.3s;
+  }
+  .model-card:hover .model-pct { color: rgba(240,90,40,0.25); }
+
+  /* ROADMAP */
+  .roadmap { background: var(--dark2); }
+  .timeline { margin-top: 80px; position: relative; }
+  .timeline::before {
+    content: ''; position: absolute; left: 0; right: 0; top: 28px;
+    height: 1px; background: var(--border);
+  }
+  .timeline-track {
+    position: absolute; left: 0; top: 28px; height: 1px;
+    background: var(--orange); width: 25%;
+    transition: width 1s ease;
+  }
+  .timeline-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .timeline-item { padding-top: 60px; padding-right: 40px; position: relative; }
+  .timeline-dot {
+    position: absolute; top: 20px; left: 0;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--dark2); border: 2px solid var(--border);
+    transform: translateX(-50%);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .timeline-item.active .timeline-dot {
+    background: var(--orange); border-color: var(--orange);
+    box-shadow: 0 0 20px rgba(240,90,40,0.5);
+  }
+  .timeline-year {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem;
+    color: var(--orange); letter-spacing: 2px; line-height: 1;
+    margin-bottom: 8px;
+  }
+  .timeline-title {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 1rem;
+    font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--white); margin-bottom: 16px;
+  }
+  .timeline-item ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .timeline-item ul li {
+    color: var(--gray); font-size: 0.85rem; font-weight: 300;
+    padding-left: 14px; position: relative;
+  }
+  .timeline-item ul li::before {
+    content: ''; position: absolute; left: 0; top: 9px;
+    width: 5px; height: 1px; background: var(--orange);
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--dark); padding: 120px 60px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(240,90,40,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(50px, 8vw, 100px); line-height: 0.95;
+    position: relative; z-index: 1; margin-bottom: 24px;
+  }
+  .cta-title span { color: var(--orange); }
+  .cta-sub {
+    color: var(--grayL); font-size: 1.05rem; font-weight: 300;
+    max-width: 480px; margin: 0 auto 48px; line-height: 1.7;
+    position: relative; z-index: 1;
+  }
+  .cta-actions { display: flex; gap: 16px; justify-content: center; position: relative; z-index: 1; }
+
+  /* FOOTER */
+  footer {
+    background: var(--dark2); border-top: 1px solid var(--border);
+    padding: 48px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem;
+    letter-spacing: 4px; color: var(--white); text-decoration: none;
+  }
+  .footer-logo span { color: var(--orange); }
+  .footer-tagline { color: var(--gray); font-size: 0.8rem; letter-spacing: 2px; }
+  .footer-contact { text-align: right; }
+  .footer-contact a {
+    color: var(--grayL); font-size: 0.9rem; text-decoration: none;
+    transition: color 0.2s; display: block; margin-bottom: 4px;
+  }
+  .footer-contact a:hover { color: var(--orange); }
+  .footer-loc { color: var(--gray); font-size: 0.8rem; letter-spacing: 1px; margin-top: 8px; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    nav.scrolled { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 120px 24px 80px; }
+    section { padding: 80px 24px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .stat-item:nth-child(2) { border-right: none; }
+    .problem-layout, .market-layout { grid-template-columns: 1fr; gap: 40px; }
+    .problem-left { position: static; }
+    .modules, .model-grid { grid-template-columns: 1fr; }
+    .timeline-items { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+    .cta-section { padding: 80px 24px; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-contact { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">AUTO<span>RA</span></a>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#how">Solution</a>
+    <a href="#market">Market</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#contact" class="nav-cta">Get Early Access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-grid"></div>
+  <div class="hero-orb"></div>
+
+  <div class="hero-eyebrow">On-Demand Automotive Platform · Uzbekistan</div>
+
+  <h1 class="hero-title">
+    YOUR ROAD<br>
+    <span class="line2">OUR RESPONSIBILITY</span>
+  </h1>
+
+  <p class="hero-sub">
+    Autora connects drivers with nearby auto repair shops, diagnostics centers, and towing trucks — in real time. One app. All automotive needs. Anywhere in Uzbekistan.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#contact" class="btn-primary">Get Early Access</a>
+    <a href="#how" class="btn-ghost">See How It Works</a>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item reveal">
+    <div class="stat-num">4M+</div>
+    <div class="stat-label">Registered Vehicles</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-1">
+    <div class="stat-num">$800M</div>
+    <div class="stat-label">Market Size</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-2">
+    <div class="stat-num">72%</div>
+    <div class="stat-label">Smartphone Penetration</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-3">
+    <div class="stat-num">0</div>
+    <div class="stat-label">Direct Competitors</div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="problem-layout">
+    <div class="problem-left">
+      <div class="section-tag reveal">The Problem</div>
+      <h2 class="section-title reveal reveal-delay-1">THE MARKET IS BROKEN</h2>
+      <p class="problem-desc reveal reveal-delay-2">
+        Every day, thousands of drivers in Uzbekistan face unexpected car problems with no reliable digital solution. Finding a trusted service, booking an appointment, or calling a towing truck is still fragmented, opaque, and stressful.
+      </p>
+    </div>
+    <div class="problem-cards">
+      <div class="problem-card reveal">
+        <div class="problem-num">01</div>
+        <h3>No Digital Discovery</h3>
+        <p>Drivers find mechanics through word-of-mouth or random roadside stops. Zero online presence, zero trust.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="problem-num">02</div>
+        <h3>Zero Price Transparency</h3>
+        <p>No way to compare prices before committing. Hidden costs and unexpected bills are the norm.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="problem-num">03</div>
+        <h3>Unreliable Emergency Response</h3>
+        <p>Towing services have no digital dispatch. Response times are unpredictable and prices are arbitrary.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-3">
+        <div class="problem-num">04</div>
+        <h3>No Accountability</h3>
+        <p>No rating systems, no reviews. Drivers have no way to assess service quality before it's too late.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-tag reveal">How It Works</div>
+  <h2 class="section-title reveal reveal-delay-1">THREE MODULES.<br>ONE PLATFORM.</h2>
+  <div class="modules">
+    <div class="module reveal">
+      <div class="module-num">01</div>
+      <div class="module-icon">🔧</div>
+      <h3>Service Booking</h3>
+      <ul>
+        <li>Search nearby auto repair shops</li>
+        <li>Filter by service, price & rating</li>
+        <li>Book same-day or in advance</li>
+        <li>In-app payment & digital invoice</li>
+        <li>Real-time status updates</li>
+      </ul>
+    </div>
+    <div class="module reveal reveal-delay-1">
+      <div class="module-num">02</div>
+      <div class="module-icon">🚛</div>
+      <h3>On-Demand Towing</h3>
+      <ul>
+        <li>One-tap emergency towing request</li>
+        <li>Real-time GPS driver tracking</li>
+        <li>Upfront pricing before confirmation</li>
+        <li>Live ETA on map</li>
+        <li>Nationwide coverage (growing)</li>
+      </ul>
+    </div>
+    <div class="module reveal reveal-delay-2">
+      <div class="module-num">03</div>
+      <div class="module-icon">⭐</div>
+      <h3>Trust & Quality</h3>
+      <ul>
+        <li>Verified provider profiles</li>
+        <li>Ratings & review system</li>
+        <li>Response time metrics</li>
+        <li>Dispute resolution & support</li>
+        <li>In-app & UzCard payments</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section class="market" id="market">
+  <div class="market-layout">
+    <div>
+      <div class="section-tag reveal">Market Opportunity</div>
+      <h2 class="section-title reveal reveal-delay-1">MASSIVE.<br>UNTOUCHED.</h2>
+      <div class="market-stats">
+        <div class="market-stat reveal reveal-delay-1">
+          <div class="market-stat-num">4M+</div>
+          <div class="market-stat-info">
+            <strong>Registered Vehicles</strong>
+            <span>Growing ~8% annually across Uzbekistan</span>
+          </div>
+        </div>
+        <div class="market-stat reveal reveal-delay-2">
+          <div class="market-stat-num">$800M</div>
+          <div class="market-stat-info">
+            <strong>Annual Market Size</strong>
+            <span>Automotive services — completely undigitized</span>
+          </div>
+        </div>
+        <div class="market-stat reveal reveal-delay-3">
+          <div class="market-stat-num">72%</div>
+          <div class="market-stat-info">
+            <strong>Smartphone Penetration</strong>
+            <span>Rising rapidly, young tech-savvy population</span>
+          </div>
+        </div>
+        <div class="market-stat reveal reveal-delay-4">
+          <div class="market-stat-num">600K+</div>
+          <div class="market-stat-info">
+            <strong>Cars in Tashkent</strong>
+            <span>Our primary launch city and beachhead market</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="market-visual reveal">
+      <div class="market-circle">
+        <div class="market-dot"></div>
+        <div class="market-dot"></div>
+        <div class="market-circle-inner">
+          <div class="market-center-num">UZB</div>
+          <div class="market-center-label">First Mover</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS MODEL -->
+<section class="model" id="model">
+  <div class="section-tag reveal">Business Model</div>
+  <h2 class="section-title reveal reveal-delay-1">HOW WE<br>MAKE MONEY</h2>
+  <div class="model-grid">
+    <div class="model-card reveal">
+      <div class="model-badge">Primary</div>
+      <h3>Booking Commission</h3>
+      <p>10–15% commission on every service booking completed through the platform. Applied to repair, diagnostics, oil change, and all scheduled services.</p>
+      <div class="model-pct">15%</div>
+    </div>
+    <div class="model-card reveal reveal-delay-1">
+      <div class="model-badge">Primary</div>
+      <h3>Towing Commission</h3>
+      <p>12–18% commission on each towing job dispatched through the app. Higher margin due to urgency and low price sensitivity in emergency situations.</p>
+      <div class="model-pct">18%</div>
+    </div>
+    <div class="model-card reveal reveal-delay-2">
+      <div class="model-badge">Recurring</div>
+      <h3>Provider Subscriptions</h3>
+      <p>Monthly SaaS plans for service providers — Basic (free), Standard ($15–25/mo), Premium ($40–60/mo) with priority listings and analytics.</p>
+      <div class="model-pct">$60</div>
+    </div>
+    <div class="model-card reveal reveal-delay-3">
+      <div class="model-badge">Future</div>
+      <h3>Featured Listings & Parts</h3>
+      <p>Paid top-placement ads for providers + banner advertising from auto brands. Future: spare parts marketplace commission.</p>
+      <div class="model-pct">∞</div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="roadmap" id="roadmap">
+  <div class="section-tag reveal">Roadmap</div>
+  <h2 class="section-title reveal reveal-delay-1">THE ROAD AHEAD</h2>
+  <div class="timeline reveal">
+    <div class="timeline-track" id="timelineTrack"></div>
+    <div class="timeline-items">
+      <div class="timeline-item active">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2025</div>
+        <div class="timeline-title">Tashkent Launch</div>
+        <ul>
+          <li>MVP app launch</li>
+          <li>200+ providers onboarded</li>
+          <li>15,000 users</li>
+          <li>$55K net revenue</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2026</div>
+        <div class="timeline-title">Scale Up</div>
+        <ul>
+          <li>National expansion</li>
+          <li>Spare parts marketplace</li>
+          <li>B2B fleet management</li>
+          <li>60,000 users</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2027</div>
+        <div class="timeline-title">Market Leader</div>
+        <ul>
+          <li>Series A fundraise</li>
+          <li>500,000+ users</li>
+          <li>Uzbekistan #1 auto app</li>
+          <li>$950K+ revenue</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2028+</div>
+        <div class="timeline-title">Central Asia</div>
+        <ul>
+          <li>Kazakhstan expansion</li>
+          <li>Kyrgyzstan entry</li>
+          <li>Auto super-app vision</li>
+          <li>300M+ addressable market</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="cta-bg"></div>
+  <h2 class="cta-title reveal">
+    READY TO JOIN<br><span>THE RIDE?</span>
+  </h2>
+  <p class="cta-sub reveal reveal-delay-1">
+    Whether you're a driver, auto service provider, or investor — Autora is building something big. Get in touch and be part of it from day one.
+  </p>
+  <div class="cta-actions reveal reveal-delay-2">
+    <a href="mailto:ismimnima5566@gmail.com" class="btn-primary">Contact Us</a>
+    <a href="tel:+998886150770" class="btn-ghost">Call Us</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <a href="#" class="footer-logo">AUTO<span>RA</span></a>
+    <div class="footer-tagline" style="margin-top:8px;">Your Road, Our Responsibility</div>
+  </div>
+  <div style="color:var(--gray);font-size:0.8rem;letter-spacing:1px;">
+    © 2025 Autora. All rights reserved.
+  </div>
+  <div class="footer-contact">
+    <a href="mailto:ismimnima5566@gmail.com">ismimnima5566@gmail.com</a>
+    <a href="tel:+998886150770">+998 88 615 07 70</a>
+    <div class="footer-loc">📍 Tashkent, Uzbekistan</div>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Hover effects on interactive elements
+  document.querySelectorAll('a, button, .stat-item, .problem-card, .module, .model-card, .market-stat').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      ring.style.width = '60px';
+      ring.style.height = '60px';
+      ring.style.borderColor = 'rgba(240,90,40,0.8)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      ring.style.width = '40px';
+      ring.style.height = '40px';
+      ring.style.borderColor = 'rgba(240,90,40,0.5)';
+    });
+  });
+
+  // Nav scroll effect
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
